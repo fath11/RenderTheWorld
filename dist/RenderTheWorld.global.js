@@ -27825,7 +27825,6 @@ void main() {
         this.runtime = _runtime ?? Scratch2?.vm?.runtime;
         if (!this.runtime)
           return;
-        console.log(this.runtime);
         hackFun(_runtime);
         setExpandableBlocks(
           this.runtime,
@@ -29014,15 +29013,6 @@ void main() {
        * @param {string} args.Anti_Aliasing
        */
       init({ color, sizex, sizey, Anti_Aliasing }) {
-        const _draw = this.runtime.renderer.draw;
-        const _resize = this.runtime.renderer.resize;
-        this.runtime.renderer.resize = (pixelsWide, pixelsTall) => {
-          _resize.call(this.runtime.renderer, pixelsWide, pixelsTall);
-          if (this.tc) {
-            this.tc.width = String(pixelsWide) + "px";
-            this.tc.height = String(pixelsTall) + "px";
-          }
-        };
         this.dirty = false;
         this.scratchCanvas = this.runtime.renderer.canvas;
         this.clock = new Clock();
@@ -29049,6 +29039,7 @@ void main() {
           Cast.toNumber(sizex),
           Cast.toNumber(sizey)
         );
+        this.tc.size = [sizex, sizey];
         this.renderer.outputColorSpace = SRGBColorSpace;
         this.scene = new Scene();
         this.scene.background = new Color(Cast.toNumber(color));
@@ -29082,22 +29073,20 @@ void main() {
         this.render = () => {
           this._clock = this.clock.getDelta();
           this.renderer.render(this.scene, this.camera);
-          this.threeSkin.setContent(this.tc);
-          this.runtime.requestRedraw();
           if (this.controls.enableDamping) {
             this.controls.update();
           }
+          this.threeSkin.setContent(this.tc);
+          this.runtime.requestRedraw();
         };
         this._listener();
       }
       _listener() {
         if (!this.is_listener) {
           this.runtime.on("PROJECT_START", () => {
-            console.log(chen_RenderTheWorld_extensionId + ": Starting renders");
             this.renderer.setAnimationLoop(this.render);
           });
           this.runtime.on("PROJECT_STOP_ALL", () => {
-            console.log(chen_RenderTheWorld_extensionId + ": Stopping renders");
             this.renderer.setAnimationLoop(null);
           });
           this.is_listener = true;

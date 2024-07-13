@@ -898,7 +898,6 @@ import {
         constructor(_runtime) {
             this.runtime = _runtime ?? Scratch?.vm?.runtime;
             if (!this.runtime) return;
-            console.log(this.runtime)
 
             hackFun(_runtime);
 
@@ -2130,6 +2129,7 @@ import {
          * @param {string} args.Anti_Aliasing
          */
         init({ color, sizex, sizey, Anti_Aliasing }) {
+            /*
             const _draw = this.runtime.renderer.draw;
             const _resize = this.runtime.renderer.resize;
             this.runtime.renderer.resize = (pixelsWide, pixelsTall) => {
@@ -2138,7 +2138,9 @@ import {
                     this.tc.width = String(pixelsWide) + "px";
                     this.tc.height = String(pixelsTall) + "px";
                 }
+                this.render()
             };
+            */
             // this.runtime.renderer.draw = () => {
             //     if (!this.isTdShow) {
             //         _draw.call(this.runtime.renderer);
@@ -2197,6 +2199,7 @@ import {
 
                 Cast.toNumber(sizey),
             );
+            this.tc.size = [sizex, sizey]
             this.renderer.outputColorSpace = THREE.SRGBColorSpace;
 
             this.scene = new THREE.Scene(); // 创建场景
@@ -2258,12 +2261,12 @@ import {
         _listener() {
             if (!this.is_listener) {
                 this.runtime.on("PROJECT_START", () => {
-                    console.log(chen_RenderTheWorld_extensionId + ": Starting renders");
+                    //console.log(chen_RenderTheWorld_extensionId + ": Starting renders");
                     this.renderer.setAnimationLoop(this.render);
                 });
 
                 this.runtime.on("PROJECT_STOP_ALL", () => {
-                    console.log(chen_RenderTheWorld_extensionId + ": Stopping renders");
+                    //console.log(chen_RenderTheWorld_extensionId + ": Stopping renders");
                     this.renderer.setAnimationLoop(null);
                 });
                 this.is_listener = true;
