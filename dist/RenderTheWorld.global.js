@@ -27828,10 +27828,10 @@ void main() {
         if (!this.runtime)
           return;
         hackFun(_runtime);
-        setExpandableBlocks(
-          this.runtime,
-          this
-        );
+        //setExpandableBlocks(
+        //  this.runtime,
+        //  this
+        //);
         this.is_listener = false;
         this._init_porject_time = 0;
         this.isWebglAvailable = false;
