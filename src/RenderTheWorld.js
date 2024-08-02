@@ -873,7 +873,7 @@ import {
                 "set Light: [name]'s shadow texture resolution x[xsize] y[ysize]",
             "RenderTheWorld.moveLight": "Light: [name] go to: x[x] y[y] z[z]",
             "RenderTheWorld.getLightPos": "get Light: [name]'s [xyz] pos",
-            "RenderTheWorld.deleteLight": "delete ligth: [name]",
+            "RenderTheWorld.deleteLight": "delete light: [name]",
 
             "RenderTheWorld.camera": "📷Camera",
             "RenderTheWorld.moveCamera": "camera go to: x[x]y[y]z[z]",

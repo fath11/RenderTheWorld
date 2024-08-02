@@ -27828,10 +27828,10 @@ void main() {
         if (!this.runtime)
           return;
         hackFun(_runtime);
-        //setExpandableBlocks(
-        //  this.runtime,
-        //  this
-        //);
+        setExpandableBlocks(
+          this.runtime,
+          this
+        );
         this.is_listener = false;
         this._init_porject_time = 0;
         this.isWebglAvailable = false;
@@ -29103,6 +29103,7 @@ void main() {
           Cast.toNumber(sizex),
           Cast.toNumber(sizey)
         );
+        this.tc.size = [sizex, sizey];
         this.renderer.outputColorSpace = SRGBColorSpace;
         this.scene = new Scene();
         this.scene.background = new Color(Cast.toNumber(color));
@@ -29152,7 +29153,6 @@ void main() {
       _listener() {
         if (!this.is_listener) {
           this.runtime.on("PROJECT_START", () => {
-            console.log(chen_RenderTheWorld_extensionId + ": Starting renders");
             this.renderer.setAnimationLoop(this.render);
           });
           this.runtime.on("PROJECT_STOP_ALL", () => {
