@@ -626,57 +626,57 @@ import {
     */
     class Skins {
         constructor(runtime) {
-        this.runtime = runtime
-        const Skin = this.runtime.renderer.exports.Skin
-    
-        class CanvasSkin extends Skin {
-            constructor(id, renderer) {
-            super(id, renderer)
-            this.gl = renderer._gl
-            const texture = this.gl.createTexture()
-            this.gl.bindTexture(this.gl.TEXTURE_2D, texture)
-            this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE)
-            this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE)
-            this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST)
-            this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST)
-            //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-            //gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0,255,0,255]));
-            this._texture = texture
-            this._rotationCenter = [320, 180]
-            this._size = [640, 360]
+            this.runtime = runtime
+            const Skin = this.runtime.renderer.exports.Skin
+
+            class CanvasSkin extends Skin {
+                constructor(id, renderer) {
+                    super(id, renderer)
+                    this.gl = renderer._gl
+                    const texture = this.gl.createTexture()
+                    this.gl.bindTexture(this.gl.TEXTURE_2D, texture)
+                    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE)
+                    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE)
+                    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.NEAREST)
+                    this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST)
+                    //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+                    //gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0,255,0,255]));
+                    this._texture = texture
+                    this._rotationCenter = [320, 180]
+                    this._size = [640, 360]
+                }
+                dispose() {
+                    if (this._texture) {
+                        this.renderer.gl.deleteTexture(this._texture)
+                        this._texture = null
+                    }
+                    super.dispose()
+                }
+                set size(value) {
+                    this._size = value
+                    this._rotationCenter = [value[0] / 2, value[1] / 2]
+                }
+                get size() {
+                    return this._size
+                }
+                getTexture(scale) {
+                    return this._texture || super.getTexture()
+                }
+                setContent(textureData) {
+                    this.gl.bindTexture(this.gl.TEXTURE_2D, this._texture)
+                    this.gl.texImage2D(
+                        this.gl.TEXTURE_2D,
+                        0,
+                        this.gl.RGBA,
+                        this.gl.RGBA,
+                        this.gl.UNSIGNED_BYTE,
+                        textureData,
+                    )
+                    this.emit(Skin.Events.WasAltered)
+                }
             }
-            dispose() {
-            if (this._texture) {
-                this.renderer.gl.deleteTexture(this._texture)
-                this._texture = null
-            }
-            super.dispose()
-            }
-            set size(value) {
-            this._size = value
-            this._rotationCenter = [value[0] / 2, value[1] / 2]
-            }
-            get size() {
-            return this._size
-            }
-            getTexture(scale) {
-            return this._texture || super.getTexture()
-            }
-            setContent(textureData) {
-            this.gl.bindTexture(this.gl.TEXTURE_2D, this._texture)
-            this.gl.texImage2D(
-                this.gl.TEXTURE_2D,
-                0,
-                this.gl.RGBA,
-                this.gl.RGBA,
-                this.gl.UNSIGNED_BYTE,
-                textureData,
-            )
-            this.emit(Skin.Events.WasAltered)
-            }
-        }
-    
-        this.CanvasSkin = CanvasSkin
+
+            this.CanvasSkin = CanvasSkin
         }
     }
     //End of Skins, Please keep this comment if you wanna use this code :3
@@ -701,8 +701,8 @@ import {
             "RenderTheWorld.fileListEmpty": "没有文件",
             "RenderTheWorld.apidocs": "📖API文档",
             "RenderTheWorld.objectLoadingCompleted": "当[name]对象加载完成时",
-            //"RenderTheWorld.set3dState": "设置3D显示器状态为: [state]",
-            //"RenderTheWorld.get3dState": "​3D显示器是显示的?",
+            "RenderTheWorld.set3dState": "设置3D显示器状态为: [state]",
+            "RenderTheWorld.get3dState": "​3D显示器是显示的?",
             "RenderTheWorld.3dState.display": "显示",
             "RenderTheWorld.3dState.hidden": "隐藏",
             "RenderTheWorld.init":
@@ -765,6 +765,8 @@ import {
                 "创建或重置点光源: [name] 颜色: [color] 光照强度: [intensity] 位置: x[x] y[y] z[z] 衰减量[decay] [YN]投射阴影",
             "RenderTheWorld.makeDirectionalLight":
                 "创建或重置方向光: [name] 颜色: [color] 光照强度: [intensity] 位置: x[x] y[y] z[z] 指向: x[x2] y[y2] z[z2] [YN]投射阴影",
+            "RenderTheWorld.setDirectionalLightShawdowCamera":
+                "设置方向光: [name] 的阴影投射范围 left: [left] right: [right] top: [top] bottom: [bottom]",
             "RenderTheWorld.setLightMapSize":
                 "设置光源: [name] 的阴影纹理分辨率为: x[xsize] y[ysize]",
             "RenderTheWorld.moveLight": "将光源: [name] 移动到: x[x] y[y] z[z]",
@@ -865,6 +867,8 @@ import {
                 "reset or make a PointLight: [name] color: [color] intensity: [intensity] position: x[x] y[y] z[z] decay[decay] [YN]cast shadows",
             "RenderTheWorld.makeDirectionalLight":
                 "reset or make a DirectionalLight: [name] color: [color] intensity: [intensity] position: x[x] y[y] z[z] to: x[x2] y[y2] z[z2] [YN]cast shadows",
+            "RenderTheWorld.setDirectionalLightShawdowCamera":
+                "set the shadow casting range for DirectionalLight: [name] left: [left] right: [right] top: [top] bottom: [bottom]",
             "RenderTheWorld.setLightMapSize":
                 "set Light: [name]'s shadow texture resolution x[xsize] y[ysize]",
             "RenderTheWorld.moveLight": "Light: [name] go to: x[x] y[y] z[z]",
@@ -907,6 +911,7 @@ import {
                 this
             );
             this.is_listener = false;
+            this._init_porject_time = 0;
 
             // 兼容性
             this.isWebglAvailable = false;
@@ -942,19 +947,34 @@ import {
 
             // threejs显示canvas
             this.tc = null;
+            this.isTcShow = false;
+            this.NullCanvas = document.createElement("canvas");
 
             // threejs skin
+            let index = this.runtime.renderer._groupOrdering.indexOf("video");
+            this.runtime.renderer._groupOrdering.splice(index + 1, 0, "RenderTheWorld");
+            this.runtime.renderer._layerGroups["RenderTheWorld"] = {
+                groupIndex: 0,
+                drawListOffset: this.runtime.renderer._layerGroups["video"].drawListOffset,
+            };
+            for (let i = 0; i < this.runtime.renderer._groupOrdering.length; i++) {
+                this.runtime.renderer._layerGroups[this.runtime.renderer._groupOrdering[i]].groupIndex = i;
+            }
+
+            // Create drawable and skin
             this.threeSkinId = this.runtime.renderer._nextSkinId++
             let SkinsClass = new Skins(this.runtime);
             this.threeSkin = new SkinsClass.CanvasSkin(this.threeSkinId, this.runtime.renderer)
             this.runtime.renderer._allSkins[this.threeSkinId] = this.threeSkin
 
             // threejs drawable layer
-            this.threeDrawableId = this.runtime.renderer.createDrawable("pen")
+            this.threeDrawableId = this.runtime.renderer.createDrawable("RenderTheWorld")
             this.runtime.renderer.updateDrawableSkinId(
                 this.threeDrawableId,
                 this.threeSkinId,
             );
+
+            console.log(this.runtime.renderer);
 
             this.clock = null;
             this._clock = 0;
@@ -1012,6 +1032,22 @@ import {
                                 menu: "Anti_Aliasing",
                             },
                         },
+                    },
+                    {
+                        opcode: "set3dState",
+                        blockType: BlockType.COMMAND,
+                        text: this.formatMessage("RenderTheWorld.set3dState"),
+                        arguments: {
+                            state: {
+                                type: "string",
+                                menu: "3dState",
+                            },
+                        },
+                    },
+                    {
+                        opcode: "get3dState",
+                        blockType: BlockType.BOOLEAN,
+                        text: this.formatMessage("RenderTheWorld.get3dState"),
                     },
                     // {
                     //     opcode: "render",
@@ -1498,6 +1534,7 @@ import {
                         text: this.formatMessage(
                             "RenderTheWorld.objectLoadingCompleted",
                         ),
+                        isEdgeActivated: false,
                         shouldRestartExistingThreads: false,
                         arguments: {
                             name: {
@@ -1634,6 +1671,35 @@ import {
                         },
                     },
                     "---",
+                    {
+                        opcode: "setDirectionalLightShawdowCamera",
+                        blockType: BlockType.COMMAND,
+                        text: this.formatMessage(
+                            "RenderTheWorld.setDirectionalLightShawdowCamera",
+                        ),
+                        arguments: {
+                            name: {
+                                type: "string",
+                                defaultValue: "name",
+                            },
+                            left: {
+                                type: "number",
+                                defaultValue: -20,
+                            },
+                            right: {
+                                type: "number",
+                                defaultValue: 20,
+                            },
+                            top: {
+                                type: "number",
+                                defaultValue: 20,
+                            },
+                            bottom: {
+                                type: "number",
+                                defaultValue: -20,
+                            },
+                        },
+                    },
                     {
                         opcode: "setLightMapSize",
                         blockType: BlockType.COMMAND,
@@ -2129,18 +2195,17 @@ import {
          * @param {string} args.Anti_Aliasing
          */
         init({ color, sizex, sizey, Anti_Aliasing }) {
-            /*
+            this._init_porject_time = new Date().getTime();
             const _draw = this.runtime.renderer.draw;
-            const _resize = this.runtime.renderer.resize;
-            this.runtime.renderer.resize = (pixelsWide, pixelsTall) => {
-                _resize.call(this.runtime.renderer, pixelsWide, pixelsTall);
-                if (this.tc) {
-                    this.tc.width = String(pixelsWide) + "px";
-                    this.tc.height = String(pixelsTall) + "px";
-                }
-                this.render()
-            };
-            */
+            // 将原来的大小自适应删掉就能解决黑屏
+            // const _resize = this.runtime.renderer.resize;
+            // this.runtime.renderer.resize = (pixelsWide, pixelsTall) => {
+            //     _resize.call(this.runtime.renderer, pixelsWide, pixelsTall);
+            //     if (this.tc) {
+            //         this.tc.width = String(pixelsWide) + "px";
+            //         this.tc.height = String(pixelsTall) + "px";
+            //     }
+            // };
             // this.runtime.renderer.draw = () => {
             //     if (!this.isTdShow) {
             //         _draw.call(this.runtime.renderer);
@@ -2193,6 +2258,7 @@ import {
             this.renderer.setClearColor("#000000"); // 设置渲染器背景
 
             this.renderer.shadowMap.enabled = true;
+            this.renderer.shadowMapEnabled = true;
             //this.renderer.setSize(this.tc.clientWidth, this.tc.clientHeight, false);
             this.renderer.setSize(
                 Cast.toNumber(sizex),
@@ -2221,7 +2287,7 @@ import {
             );
             this.controls = new OrbitControls(
                 this.camera,
-                this.renderer.domElement,
+                this.scratchCanvas,
             );
             this.controls.enabled = false;
             this.controls.enableDamping = false;
@@ -2244,13 +2310,20 @@ import {
             );
             this.scene.add(this.hemisphere_light);
 
+            this.isTcShow = true;
+
             this.render = () => {
                 this._clock = this.clock.getDelta();
                 this.renderer.render(this.scene, this.camera);
-                this.threeSkin.setContent(this.tc)
+                // this.threeSkin.setContent(this.tc)
+                if (this.isTcShow) {
+                    this.threeSkin.setContent(this.tc);
+                } else {
+                    this.threeSkin.setContent(this.NullCanvas);
+                }
                 this.runtime.requestRedraw()
 
-                if (this.controls.enableDamping) {
+                if (this.controls.enabled) {
                     this.controls.update();
                 }
             };
@@ -2266,11 +2339,45 @@ import {
                 });
 
                 this.runtime.on("PROJECT_STOP_ALL", () => {
-                    //console.log(chen_RenderTheWorld_extensionId + ": Stopping renders");
+                    this._init_porject_time = 0;
+                    console.log(chen_RenderTheWorld_extensionId + ": Stopping renders");
                     this.renderer.setAnimationLoop(null);
+                    this.scene.traverse((child) => {
+                        if (child.material) {
+                            child.material.dispose();
+                        }
+                        if (child.geometry) {
+                            child.geometry.dispose();
+                        }
+                        child = null;
+                    });
+                    this.renderer.dispose();
+                    this.scene.clear();
                 });
                 this.is_listener = true;
             }
+        }
+
+        /**
+         * 设置3d渲染器状态
+         * @param {object} args
+         * @param {string} args.state
+         */
+
+        set3dState({ state }) {
+            if (!this.tc) {
+                return "⚠️显示器未初始化！";
+            }
+
+            if (Cast.toString(state) === "display") {
+                this.isTcShow = true;
+            } else {
+                this.isTcShow = false;
+            }
+        }
+
+        get3dState(args) {
+            return this.isTcShow;
         }
 
         // _resize() {
@@ -2289,7 +2396,7 @@ import {
         //     this._clock = this.clock.getDelta();
         //     this.renderer.render(this.scene, this.camera);
 
-        //     if (this.controls.enableDamping) {
+        //     if (this.controls.enabled) {
         //         this.controls.update();
         //     }
         // }
@@ -2313,6 +2420,7 @@ import {
             if (!this.tc) {
                 return "⚠️显示器未初始化！";
             }
+            let init_porject_time = this._init_porject_time;  // 解决快速点击多次绿旗，模型重复添加问题
             // 名称
 
             name = Cast.toString(name);
@@ -2345,14 +2453,16 @@ import {
                 Cast.toNumber(z),
             );
 
+
             if (Cast.toString(YN) == "true") {
+                this.objects[name].castShadow
                 this.objects[name].castShadow = true;
             }
 
             if (Cast.toString(YN2) == "true") {
                 this.objects[name].receiveShadow = true;
             }
-            this.runtime.startHatsWithParams(
+            let r = this.runtime.startHatsWithParams(
                 chen_RenderTheWorld_extensionId + "_objectLoadingCompleted",
                 {
                     parameters: {
@@ -2360,8 +2470,13 @@ import {
                     },
                 },
             );
-            this.scene.add(this.objects[name]);
-            this.render()
+            r && r.forEach(((e) => {
+                this.runtime.sequencer.stepThread(e);
+            }));
+            if (init_porject_time == this._init_porject_time) {
+                this.scene.add(this.objects[name]);
+                this.render()
+            }
         }
 
         /**
@@ -2383,6 +2498,7 @@ import {
             if (!this.tc) {
                 return "⚠️显示器未初始化！";
             }
+            let init_porject_time = this._init_porject_time;
             // 名称
 
             name = Cast.toString(name);
@@ -2422,7 +2538,7 @@ import {
             if (Cast.toString(YN2) == "true") {
                 this.objects[name].receiveShadow = true;
             }
-            this.runtime.startHatsWithParams(
+            let r = this.runtime.startHatsWithParams(
                 chen_RenderTheWorld_extensionId + "_objectLoadingCompleted",
                 {
                     parameters: {
@@ -2430,8 +2546,13 @@ import {
                     },
                 },
             );
-            this.scene.add(this.objects[name]);
-            this.render()
+            r && r.forEach(((e) => {
+                this.runtime.sequencer.stepThread(e);
+            }));
+            if (init_porject_time == this._init_porject_time) {
+                this.scene.add(this.objects[name]);
+                this.render()
+            }
         }
 
         /**
@@ -2452,6 +2573,7 @@ import {
             if (!this.tc) {
                 return "⚠️显示器未初始化！";
             }
+            let init_porject_time = this._init_porject_time;
             // 名称
 
             name = Cast.toString(name);
@@ -2489,7 +2611,7 @@ import {
             if (Cast.toString(YN2) == "true") {
                 this.objects[name].receiveShadow = true;
             }
-            this.runtime.startHatsWithParams(
+            let r = this.runtime.startHatsWithParams(
                 chen_RenderTheWorld_extensionId + "_objectLoadingCompleted",
                 {
                     parameters: {
@@ -2497,8 +2619,13 @@ import {
                     },
                 },
             );
-            this.scene.add(this.objects[name]);
-            this.render()
+            r && r.forEach(((e) => {
+                this.runtime.sequencer.stepThread(e);
+            }));
+            if (init_porject_time == this._init_porject_time) {
+                this.scene.add(this.objects[name]);
+                this.render()
+            }
         }
 
         /**
@@ -2530,6 +2657,7 @@ import {
             if (_filelist.indexOf(mtlfile) == -1) {
                 return "⚠️MTL文件不存在！";
             }
+            let init_porject_time = this._init_porject_time;
             // 名称
 
             name = Cast.toString(name);
@@ -2573,7 +2701,7 @@ import {
                                 }
                             });
                         }
-                        this.runtime.startHatsWithParams(
+                        let r = this.runtime.startHatsWithParams(
                             chen_RenderTheWorld_extensionId +
                             "_objectLoadingCompleted",
                             {
@@ -2582,8 +2710,13 @@ import {
                                 },
                             },
                         );
-                        this.scene.add(this.objects[name]);
-                        this.render()
+                        r && r.forEach(((e) => {
+                            this.runtime.sequencer.stepThread(e);
+                        }));
+                        if (init_porject_time == this._init_porject_time) {
+                            this.scene.add(this.objects[name]);
+                            this.render()
+                        }
                     },
                 );
             });
@@ -2615,6 +2748,7 @@ import {
             if (_filelist.indexOf(gltffile) == -1) {
                 return "⚠️GLTF文件不存在！";
             }
+            let init_porject_time = this._init_porject_time;
             // 名称
 
             name = Cast.toString(name);
@@ -2662,7 +2796,7 @@ import {
                         }
                     });
                 }
-                this.runtime.startHatsWithParams(
+                let r = this.runtime.startHatsWithParams(
                     chen_RenderTheWorld_extensionId + "_objectLoadingCompleted",
                     {
                         parameters: {
@@ -2670,8 +2804,13 @@ import {
                         },
                     },
                 );
-                this.scene.add(this.objects[name]);
-                this.render()
+                r && r.forEach(((e) => {
+                    this.runtime.sequencer.stepThread(e);
+                }));
+                if (init_porject_time == this._init_porject_time) {
+                    this.scene.add(this.objects[name]);
+                    this.render()
+                }
             });
         }
 
@@ -2982,6 +3121,7 @@ import {
             ); //设置光源的位置
 
             this.lights[name].shadow.bias = -0.00005;
+
             if (Cast.toString(YN) == "true") {
                 this.lights[name].castShadow = true;
             }
@@ -3024,10 +3164,59 @@ import {
             if (Cast.toString(YN) == "true") {
                 this.lights[name].castShadow = true;
             }
+
+            // 设置平行光范围大一点。
+            this.lights[name].shadow.camera.left = -20;
+            this.lights[name].shadow.camera.right = 20;
+            this.lights[name].shadow.camera.top = 20;
+            this.lights[name].shadow.camera.bottom = -20;
+            this.lights[name].shadow.camera.near = 0.1;
+            this.lights[name].shadow.camera.far = 1000;
+
             this.scene.add(this.lights[name]); //在场景中添加光源
             this.render()
         }
 
+
+
+        /**
+         * 设置平行光的阴影投射范围
+         * @param {object} args
+         * @param {string} args.name
+         * @param {number} args.left
+         * @param {number} args.right
+         * @param {number} args.top
+         * @param {number} args.bottom
+        */
+        setDirectionalLightShawdowCamera({ name, left, right, top, bottom }) {
+            if (!this.tc) {
+                return "⚠️显示器未初始化！";
+            }
+
+            name = Cast.toString(name);
+            if (name in this.lights) {
+                if (this.lights[name].type === "DirectionalLight") {
+                    let _camera = new THREE.OrthographicCamera(
+                        Cast.toNumber(left),
+                        Cast.toNumber(right),
+                        Cast.toNumber(top),
+                        Cast.toNumber(bottom),
+                        this.lights[name].shadow.camera.near,
+                        this.lights[name].shadow.camera.far
+                    )
+                    _camera.zoom = this.lights[name].shadow.camera.zoom;
+                    this.lights[name].shadow.camera = _camera;
+                }
+            }
+        }
+
+        /**
+         * 设置光源阴影贴图大小
+         * @param {object} args
+         * @param {string} args.name
+         * @param {number} args.xsize
+         * @param {number} args.ysize
+         */
         setLightMapSize({ name, xsize, ysize }) {
             if (!this.tc) {
                 return "⚠️显示器未初始化！";
@@ -3036,8 +3225,8 @@ import {
             name = Cast.toString(name);
             if (name in this.lights) {
                 this.lights[name].shadow.mapSize.width = Cast.toNumber(xsize);
-
                 this.lights[name].shadow.mapSize.height = Cast.toNumber(ysize);
+                console.log(this.lights[name].shadow);
             }
         }
 
@@ -3195,7 +3384,6 @@ import {
          * @param {number} args.y
          * @param {number} args.z
          */
-
         cameraLookAt({ x, y, z }) {
             if (!this.tc) {
                 return "⚠️显示器未初始化！";
@@ -3208,7 +3396,8 @@ import {
 
                     Cast.toNumber(z),
                 );
-                this.render()
+                this.controls.target = new THREE.Vector3(x, y, z);
+                this.render();
             }
         }
 

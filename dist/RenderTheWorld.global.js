@@ -27694,8 +27694,8 @@ void main() {
         "RenderTheWorld.fileListEmpty": "\u6CA1\u6709\u6587\u4EF6",
         "RenderTheWorld.apidocs": "\u{1F4D6}API\u6587\u6863",
         "RenderTheWorld.objectLoadingCompleted": "\u5F53[name]\u5BF9\u8C61\u52A0\u8F7D\u5B8C\u6210\u65F6",
-        //"RenderTheWorld.set3dState": "设置3D显示器状态为: [state]",
-        //"RenderTheWorld.get3dState": "​3D显示器是显示的?",
+        "RenderTheWorld.set3dState": "\u8BBE\u7F6E3D\u663E\u793A\u5668\u72B6\u6001\u4E3A: [state]",
+        "RenderTheWorld.get3dState": "\u200B3D\u663E\u793A\u5668\u662F\u663E\u793A\u7684?",
         "RenderTheWorld.3dState.display": "\u663E\u793A",
         "RenderTheWorld.3dState.hidden": "\u9690\u85CF",
         "RenderTheWorld.init": "\u521D\u59CB\u5316\u5E76\u8BBE\u7F6E\u80CC\u666F\u989C\u8272\u4E3A[color] \u5927\u5C0F[sizex]x[sizey]y [Anti_Aliasing]",
@@ -27735,6 +27735,7 @@ void main() {
         "RenderTheWorld.setHemisphereLightColor": "\u8BBE\u7F6E\u534A\u7403\u5149\u5929\u7A7A\u989C\u8272: [skyColor] \u5730\u9762\u989C\u8272: [groundColor] \u5149\u7167\u5F3A\u5EA6: [intensity]",
         "RenderTheWorld.makePointLight": "\u521B\u5EFA\u6216\u91CD\u7F6E\u70B9\u5149\u6E90: [name] \u989C\u8272: [color] \u5149\u7167\u5F3A\u5EA6: [intensity] \u4F4D\u7F6E: x[x] y[y] z[z] \u8870\u51CF\u91CF[decay] [YN]\u6295\u5C04\u9634\u5F71",
         "RenderTheWorld.makeDirectionalLight": "\u521B\u5EFA\u6216\u91CD\u7F6E\u65B9\u5411\u5149: [name] \u989C\u8272: [color] \u5149\u7167\u5F3A\u5EA6: [intensity] \u4F4D\u7F6E: x[x] y[y] z[z] \u6307\u5411: x[x2] y[y2] z[z2] [YN]\u6295\u5C04\u9634\u5F71",
+        "RenderTheWorld.setDirectionalLightShawdowCamera": "\u8BBE\u7F6E\u65B9\u5411\u5149: [name] \u7684\u9634\u5F71\u6295\u5C04\u8303\u56F4 left: [left] right: [right] top: [top] bottom: [bottom]",
         "RenderTheWorld.setLightMapSize": "\u8BBE\u7F6E\u5149\u6E90: [name] \u7684\u9634\u5F71\u7EB9\u7406\u5206\u8FA8\u7387\u4E3A: x[xsize] y[ysize]",
         "RenderTheWorld.moveLight": "\u5C06\u5149\u6E90: [name] \u79FB\u52A8\u5230: x[x] y[y] z[z]",
         "RenderTheWorld.getLightPos": "\u83B7\u53D6\u5149\u6E90: [name] \u7684[xyz]\u5750\u6807",
@@ -27800,6 +27801,7 @@ void main() {
         "RenderTheWorld.setHemisphereLightColor": "set HemisphereLight's skyColor: [skyColor] groundColor: [groundColor] intensity: [intensity]",
         "RenderTheWorld.makePointLight": "reset or make a PointLight: [name] color: [color] intensity: [intensity] position: x[x] y[y] z[z] decay[decay] [YN]cast shadows",
         "RenderTheWorld.makeDirectionalLight": "reset or make a DirectionalLight: [name] color: [color] intensity: [intensity] position: x[x] y[y] z[z] to: x[x2] y[y2] z[z2] [YN]cast shadows",
+        "RenderTheWorld.setDirectionalLightShawdowCamera": "set the shadow casting range for DirectionalLight: [name] left: [left] right: [right] top: [top] bottom: [bottom]",
         "RenderTheWorld.setLightMapSize": "set Light: [name]'s shadow texture resolution x[xsize] y[ysize]",
         "RenderTheWorld.moveLight": "Light: [name] go to: x[x] y[y] z[z]",
         "RenderTheWorld.getLightPos": "get Light: [name]'s [xyz] pos",
@@ -27826,11 +27828,12 @@ void main() {
         if (!this.runtime)
           return;
         hackFun(_runtime);
-        setExpandableBlocks(
-          this.runtime,
-          this
-        );
+        //setExpandableBlocks(
+        //  this.runtime,
+        //  this
+        //);
         this.is_listener = false;
+        this._init_porject_time = 0;
         this.isWebglAvailable = false;
         this.renderer = null;
         this.scene = null;
@@ -27847,15 +27850,27 @@ void main() {
         this.animations = {};
         this.scratchCanvas = null;
         this.tc = null;
+        this.isTcShow = false;
+        this.NullCanvas = document.createElement("canvas");
+        let index = this.runtime.renderer._groupOrdering.indexOf("video");
+        this.runtime.renderer._groupOrdering.splice(index + 1, 0, "RenderTheWorld");
+        this.runtime.renderer._layerGroups["RenderTheWorld"] = {
+          groupIndex: 0,
+          drawListOffset: this.runtime.renderer._layerGroups["video"].drawListOffset
+        };
+        for (let i = 0; i < this.runtime.renderer._groupOrdering.length; i++) {
+          this.runtime.renderer._layerGroups[this.runtime.renderer._groupOrdering[i]].groupIndex = i;
+        }
         this.threeSkinId = this.runtime.renderer._nextSkinId++;
         let SkinsClass = new Skins(this.runtime);
         this.threeSkin = new SkinsClass.CanvasSkin(this.threeSkinId, this.runtime.renderer);
         this.runtime.renderer._allSkins[this.threeSkinId] = this.threeSkin;
-        this.threeDrawableId = this.runtime.renderer.createDrawable("pen");
+        this.threeDrawableId = this.runtime.renderer.createDrawable("RenderTheWorld");
         this.runtime.renderer.updateDrawableSkinId(
           this.threeDrawableId,
           this.threeSkinId
         );
+        console.log(this.runtime.renderer);
         this.clock = null;
         this._clock = 0;
       }
@@ -27911,6 +27926,22 @@ void main() {
                   menu: "Anti_Aliasing"
                 }
               }
+            },
+            {
+              opcode: "set3dState",
+              blockType: BlockType.COMMAND,
+              text: this.formatMessage("RenderTheWorld.set3dState"),
+              arguments: {
+                state: {
+                  type: "string",
+                  menu: "3dState"
+                }
+              }
+            },
+            {
+              opcode: "get3dState",
+              blockType: BlockType.BOOLEAN,
+              text: this.formatMessage("RenderTheWorld.get3dState")
             },
             // {
             //     opcode: "render",
@@ -28397,6 +28428,7 @@ void main() {
               text: this.formatMessage(
                 "RenderTheWorld.objectLoadingCompleted"
               ),
+              isEdgeActivated: false,
               shouldRestartExistingThreads: false,
               arguments: {
                 name: {
@@ -28533,6 +28565,35 @@ void main() {
               }
             },
             "---",
+            {
+              opcode: "setDirectionalLightShawdowCamera",
+              blockType: BlockType.COMMAND,
+              text: this.formatMessage(
+                "RenderTheWorld.setDirectionalLightShawdowCamera"
+              ),
+              arguments: {
+                name: {
+                  type: "string",
+                  defaultValue: "name"
+                },
+                left: {
+                  type: "number",
+                  defaultValue: -20
+                },
+                right: {
+                  type: "number",
+                  defaultValue: 20
+                },
+                top: {
+                  type: "number",
+                  defaultValue: 20
+                },
+                bottom: {
+                  type: "number",
+                  defaultValue: -20
+                }
+              }
+            },
             {
               opcode: "setLightMapSize",
               blockType: BlockType.COMMAND,
@@ -29013,6 +29074,8 @@ void main() {
        * @param {string} args.Anti_Aliasing
        */
       init({ color, sizex, sizey, Anti_Aliasing }) {
+        this._init_porject_time = (/* @__PURE__ */ new Date()).getTime();
+        const _draw = this.runtime.renderer.draw;
         this.dirty = false;
         this.scratchCanvas = this.runtime.renderer.canvas;
         this.clock = new Clock();
@@ -29035,11 +29098,11 @@ void main() {
         });
         this.renderer.setClearColor("#000000");
         this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMapEnabled = true;
         this.renderer.setSize(
           Cast.toNumber(sizex),
           Cast.toNumber(sizey)
         );
-        this.tc.size = [sizex, sizey];
         this.renderer.outputColorSpace = SRGBColorSpace;
         this.scene = new Scene();
         this.scene.background = new Color(Cast.toNumber(color));
@@ -29055,7 +29118,7 @@ void main() {
         );
         this.controls = new OrbitControls(
           this.camera,
-          this.renderer.domElement
+          this.scratchCanvas
         );
         this.controls.enabled = false;
         this.controls.enableDamping = false;
@@ -29070,27 +29133,64 @@ void main() {
           0
         );
         this.scene.add(this.hemisphere_light);
+        this.isTcShow = true;
         this.render = () => {
           this._clock = this.clock.getDelta();
           this.renderer.render(this.scene, this.camera);
-          if (this.controls.enableDamping) {
+          if (this.isTcShow) {
+            this.threeSkin.setContent(this.tc);
+          } else {
+            this.threeSkin.setContent(this.NullCanvas);
+          }
+          this.runtime.requestRedraw();
+          if (this.controls.enabled) {
             this.controls.update();
           }
-          this.threeSkin.setContent(this.tc);
-          this.runtime.requestRedraw();
         };
         this._listener();
       }
       _listener() {
         if (!this.is_listener) {
           this.runtime.on("PROJECT_START", () => {
+            console.log(chen_RenderTheWorld_extensionId + ": Starting renders");
             this.renderer.setAnimationLoop(this.render);
           });
           this.runtime.on("PROJECT_STOP_ALL", () => {
+            this._init_porject_time = 0;
+            console.log(chen_RenderTheWorld_extensionId + ": Stopping renders");
             this.renderer.setAnimationLoop(null);
+            this.scene.traverse((child) => {
+              if (child.material) {
+                child.material.dispose();
+              }
+              if (child.geometry) {
+                child.geometry.dispose();
+              }
+              child = null;
+            });
+            this.renderer.dispose();
+            this.scene.clear();
           });
           this.is_listener = true;
         }
+      }
+      /**
+       * 设置3d渲染器状态
+       * @param {object} args
+       * @param {string} args.state
+       */
+      set3dState({ state }) {
+        if (!this.tc) {
+          return "\u26A0\uFE0F\u663E\u793A\u5668\u672A\u521D\u59CB\u5316\uFF01";
+        }
+        if (Cast.toString(state) === "display") {
+          this.isTcShow = true;
+        } else {
+          this.isTcShow = false;
+        }
+      }
+      get3dState(args) {
+        return this.isTcShow;
       }
       // _resize() {
       // 	this.tc.style.width = this.scratchCanvas.style.width;
@@ -29105,7 +29205,7 @@ void main() {
       //     }
       //     this._clock = this.clock.getDelta();
       //     this.renderer.render(this.scene, this.camera);
-      //     if (this.controls.enableDamping) {
+      //     if (this.controls.enabled) {
       //         this.controls.update();
       //     }
       // }
@@ -29127,6 +29227,7 @@ void main() {
         if (!this.tc) {
           return "\u26A0\uFE0F\u663E\u793A\u5668\u672A\u521D\u59CB\u5316\uFF01";
         }
+        let init_porject_time = this._init_porject_time;
         name = Cast.toString(name);
         let geometry = new BoxGeometry(
           Cast.toNumber(a),
@@ -29145,12 +29246,13 @@ void main() {
           Cast.toNumber(z)
         );
         if (Cast.toString(YN) == "true") {
+          this.objects[name].castShadow;
           this.objects[name].castShadow = true;
         }
         if (Cast.toString(YN2) == "true") {
           this.objects[name].receiveShadow = true;
         }
-        this.runtime.startHatsWithParams(
+        let r = this.runtime.startHatsWithParams(
           chen_RenderTheWorld_extensionId + "_objectLoadingCompleted",
           {
             parameters: {
@@ -29158,8 +29260,13 @@ void main() {
             }
           }
         );
-        this.scene.add(this.objects[name]);
-        this.render();
+        r && r.forEach((e) => {
+          this.runtime.sequencer.stepThread(e);
+        });
+        if (init_porject_time == this._init_porject_time) {
+          this.scene.add(this.objects[name]);
+          this.render();
+        }
       }
       /**
        * 创建或重置球体
@@ -29179,6 +29286,7 @@ void main() {
         if (!this.tc) {
           return "\u26A0\uFE0F\u663E\u793A\u5668\u672A\u521D\u59CB\u5316\uFF01";
         }
+        let init_porject_time = this._init_porject_time;
         name = Cast.toString(name);
         let geometry = new SphereGeometry(
           Cast.toNumber(radius),
@@ -29202,7 +29310,7 @@ void main() {
         if (Cast.toString(YN2) == "true") {
           this.objects[name].receiveShadow = true;
         }
-        this.runtime.startHatsWithParams(
+        let r = this.runtime.startHatsWithParams(
           chen_RenderTheWorld_extensionId + "_objectLoadingCompleted",
           {
             parameters: {
@@ -29210,8 +29318,13 @@ void main() {
             }
           }
         );
-        this.scene.add(this.objects[name]);
-        this.render();
+        r && r.forEach((e) => {
+          this.runtime.sequencer.stepThread(e);
+        });
+        if (init_porject_time == this._init_porject_time) {
+          this.scene.add(this.objects[name]);
+          this.render();
+        }
       }
       /**
        * 创建或重置平面
@@ -29230,6 +29343,7 @@ void main() {
         if (!this.tc) {
           return "\u26A0\uFE0F\u663E\u793A\u5668\u672A\u521D\u59CB\u5316\uFF01";
         }
+        let init_porject_time = this._init_porject_time;
         name = Cast.toString(name);
         let geometry = new PlaneGeometry(
           Cast.toNumber(a),
@@ -29252,7 +29366,7 @@ void main() {
         if (Cast.toString(YN2) == "true") {
           this.objects[name].receiveShadow = true;
         }
-        this.runtime.startHatsWithParams(
+        let r = this.runtime.startHatsWithParams(
           chen_RenderTheWorld_extensionId + "_objectLoadingCompleted",
           {
             parameters: {
@@ -29260,8 +29374,13 @@ void main() {
             }
           }
         );
-        this.scene.add(this.objects[name]);
-        this.render();
+        r && r.forEach((e) => {
+          this.runtime.sequencer.stepThread(e);
+        });
+        if (init_porject_time == this._init_porject_time) {
+          this.scene.add(this.objects[name]);
+          this.render();
+        }
       }
       /**
        * 导入或重置OBJ模型
@@ -29289,6 +29408,7 @@ void main() {
         if (_filelist.indexOf(mtlfile) == -1) {
           return "\u26A0\uFE0FMTL\u6587\u4EF6\u4E0D\u5B58\u5728\uFF01";
         }
+        let init_porject_time = this._init_porject_time;
         name = Cast.toString(name);
         const objLoader = new OBJLoader();
         const mtlLoader = new MTLLoader();
@@ -29319,7 +29439,7 @@ void main() {
                   }
                 });
               }
-              this.runtime.startHatsWithParams(
+              let r = this.runtime.startHatsWithParams(
                 chen_RenderTheWorld_extensionId + "_objectLoadingCompleted",
                 {
                   parameters: {
@@ -29327,8 +29447,13 @@ void main() {
                   }
                 }
               );
-              this.scene.add(this.objects[name]);
-              this.render();
+              r && r.forEach((e) => {
+                this.runtime.sequencer.stepThread(e);
+              });
+              if (init_porject_time == this._init_porject_time) {
+                this.scene.add(this.objects[name]);
+                this.render();
+              }
             }
           );
         });
@@ -29356,6 +29481,7 @@ void main() {
         if (_filelist.indexOf(gltffile) == -1) {
           return "\u26A0\uFE0FGLTF\u6587\u4EF6\u4E0D\u5B58\u5728\uFF01";
         }
+        let init_porject_time = this._init_porject_time;
         name = Cast.toString(name);
         const gltfLoader = new GLTFLoader();
         const url = this.getFileURL(Cast.toString(gltffile));
@@ -29389,7 +29515,7 @@ void main() {
               }
             });
           }
-          this.runtime.startHatsWithParams(
+          let r = this.runtime.startHatsWithParams(
             chen_RenderTheWorld_extensionId + "_objectLoadingCompleted",
             {
               parameters: {
@@ -29397,8 +29523,13 @@ void main() {
               }
             }
           );
-          this.scene.add(this.objects[name]);
-          this.render();
+          r && r.forEach((e) => {
+            this.runtime.sequencer.stepThread(e);
+          });
+          if (init_porject_time == this._init_porject_time) {
+            this.scene.add(this.objects[name]);
+            this.render();
+          }
         });
       }
       /**
@@ -29693,9 +29824,51 @@ void main() {
         if (Cast.toString(YN) == "true") {
           this.lights[name].castShadow = true;
         }
+        this.lights[name].shadow.camera.left = -20;
+        this.lights[name].shadow.camera.right = 20;
+        this.lights[name].shadow.camera.top = 20;
+        this.lights[name].shadow.camera.bottom = -20;
+        this.lights[name].shadow.camera.near = 0.1;
+        this.lights[name].shadow.camera.far = 1e3;
         this.scene.add(this.lights[name]);
         this.render();
       }
+      /**
+       * 设置平行光的阴影投射范围
+       * @param {object} args
+       * @param {string} args.name
+       * @param {number} args.left
+       * @param {number} args.right
+       * @param {number} args.top
+       * @param {number} args.bottom
+      */
+      setDirectionalLightShawdowCamera({ name, left, right, top, bottom }) {
+        if (!this.tc) {
+          return "\u26A0\uFE0F\u663E\u793A\u5668\u672A\u521D\u59CB\u5316\uFF01";
+        }
+        name = Cast.toString(name);
+        if (name in this.lights) {
+          if (this.lights[name].type === "DirectionalLight") {
+            let _camera = new OrthographicCamera(
+              Cast.toNumber(left),
+              Cast.toNumber(right),
+              Cast.toNumber(top),
+              Cast.toNumber(bottom),
+              this.lights[name].shadow.camera.near,
+              this.lights[name].shadow.camera.far
+            );
+            _camera.zoom = this.lights[name].shadow.camera.zoom;
+            this.lights[name].shadow.camera = _camera;
+          }
+        }
+      }
+      /**
+       * 设置光源阴影贴图大小
+       * @param {object} args
+       * @param {string} args.name
+       * @param {number} args.xsize
+       * @param {number} args.ysize
+       */
       setLightMapSize({ name, xsize, ysize }) {
         if (!this.tc) {
           return "\u26A0\uFE0F\u663E\u793A\u5668\u672A\u521D\u59CB\u5316\uFF01";
@@ -29704,6 +29877,7 @@ void main() {
         if (name in this.lights) {
           this.lights[name].shadow.mapSize.width = Cast.toNumber(xsize);
           this.lights[name].shadow.mapSize.height = Cast.toNumber(ysize);
+          console.log(this.lights[name].shadow);
         }
       }
       moveLight({ name, x, y, z }) {
@@ -29844,6 +30018,7 @@ void main() {
             Cast.toNumber(y),
             Cast.toNumber(z)
           );
+          this.controls.target = new Vector3(x, y, z);
           this.render();
         }
       }
