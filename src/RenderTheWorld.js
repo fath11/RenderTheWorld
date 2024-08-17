@@ -701,7 +701,13 @@ import {
         Function.prototype.apply = function (thisArg) {
             return thisArg
         }
-        const result = fn()
+        let result
+        try {
+            result = fn()
+        }
+        catch(error) {
+            console.log(error)
+        }
         Function.prototype.apply = _orig
         return result
     }

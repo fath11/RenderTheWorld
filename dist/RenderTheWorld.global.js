@@ -27692,7 +27692,12 @@ void main() {
       Function.prototype.apply = function(thisArg) {
         return thisArg;
       };
-      const result = fn();
+      let result;
+      try {
+        result = fn();
+      } catch (error) {
+        console.log(error);
+      }
       Function.prototype.apply = _orig;
       return result;
     }
@@ -27903,7 +27908,7 @@ void main() {
         "RenderTheWorld.setLightMapSize": "set Light: [name]'s shadow texture resolution x[xsize] y[ysize]",
         "RenderTheWorld.moveLight": "Light: [name] go to: x[x] y[y] z[z]",
         "RenderTheWorld.getLightPos": "get Light: [name]'s [xyz] pos",
-        "RenderTheWorld.deleteLight": "delete ligth: [name]",
+        "RenderTheWorld.deleteLight": "delete light: [name]",
         "RenderTheWorld.camera": "\u{1F4F7}Camera",
         "RenderTheWorld.moveCamera": "camera go to: x[x]y[y]z[z]",
         "RenderTheWorld.rotationCamera": "camera rotation: x[x]y[y]z[z]",
