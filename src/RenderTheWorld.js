@@ -60,7 +60,13 @@ import {
         const hijack = (fn) => {
             const _orig = Function.prototype.apply;
             Function.prototype.apply = (thisArg) => thisArg;
-            const result = fn();
+            let result
+            try {
+                result = fn()
+            } 
+            catch(error) {
+                console.log(error)
+            }
             Function.prototype.apply = _orig;
             return result;
         };
@@ -701,13 +707,7 @@ import {
         Function.prototype.apply = function (thisArg) {
             return thisArg
         }
-        let result
-        try {
-            result = fn()
-        }
-        catch(error) {
-            console.log(error)
-        }
+        const result = fn()
         Function.prototype.apply = _orig
         return result
     }

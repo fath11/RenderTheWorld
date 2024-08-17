@@ -27192,7 +27192,12 @@ void main() {
       const hijack2 = (fn) => {
         const _orig = Function.prototype.apply;
         Function.prototype.apply = (thisArg) => thisArg;
-        const result = fn();
+        let result;
+        try {
+          result = fn();
+        } catch (error) {
+          console.log(error);
+        }
         Function.prototype.apply = _orig;
         return result;
       };
@@ -27692,12 +27697,7 @@ void main() {
       Function.prototype.apply = function(thisArg) {
         return thisArg;
       };
-      let result;
-      try {
-        result = fn();
-      } catch (error) {
-        console.log(error);
-      }
+      const result = fn();
       Function.prototype.apply = _orig;
       return result;
     }
